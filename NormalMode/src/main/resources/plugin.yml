@@ -1,0 +1,10 @@
+name: TNT_Tag
+version: '${project.version}'
+main: team.yogurt.tnt_tag.Main
+authors: [ Andrius91 ]
+description: The best tnt tag plugin
+website: wiki.yogurt.team
+commands:
+  tnttag:
+    usage: /tnttag
+    description: A Simple command

@@ -1,0 +1,6 @@
+name: TNT_Tag_Game
+version: '${project.version}'
+main: team.yogurt.Main
+authors: [ Andrius91 ]
+description: The best tnt tag plugin
+website: wiki.yogurt.team

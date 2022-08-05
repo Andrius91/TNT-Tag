@@ -1,0 +1,6 @@
+name: TNT_Tag_Lobby
+version: '${project.version}'
+main: team.yogurt.Main
+authors: [ Andrius91 ]
+description: The best tnt tag plugin
+website: wiki.gogurt.team
