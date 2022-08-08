@@ -34,12 +34,14 @@ public class Create implements ICommand {
     public void perform(CommandSender sender, String[] args) {
         if(args.length == 5){
             String nombre = args[2];
-            for(IGameManager game : Main.getGames()){
-                if(game.getArenaManager().getNameArena().equalsIgnoreCase(nombre)){
-                    sender.sendMessage("Ya existe un mapa con ese nombre.");
-                    return;
-                }
+            boolean arenaExist = Main.getGames().stream()
+                    .anyMatch(x -> x.getArenaManager().getNameArena().equalsIgnoreCase(nombre));
+
+            if(arenaExist){
+                sender.sendMessage("Ya existe un mapa con ese nombre.");
+                return;
             }
+
             int min = Integer.parseInt(args[3]), max = Integer.parseInt(args[4]);
             IArenaManager arenaManager = new ArenaManager();
             IGameManager gameManager = new GameManager(Main.getInstance());

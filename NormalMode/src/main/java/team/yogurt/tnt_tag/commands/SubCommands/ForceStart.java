@@ -2,6 +2,7 @@ package team.yogurt.tnt_tag.commands.SubCommands;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import team.yogurt.common.enums.IGameState;
 import team.yogurt.common.interfaces.ICommand;
 import team.yogurt.tnt_tag.Main;
 
@@ -34,7 +35,11 @@ public class ForceStart implements ICommand {
             Player player = (Player) sender;
             getPlayerManager().setPlayer(player);
             if(getPlayerManager().isPlaying()){
-                getPlayerManager().getGame().start();
+                if(getPlayerManager().getGame().getGameState() == IGameState.WAITING){
+                    getPlayerManager().getGame().start();
+                }else{
+                    sender.sendMessage("El juego ya inició");
+                }
             }else{
                 sender.sendMessage("No estás en ninguna partida");
             }

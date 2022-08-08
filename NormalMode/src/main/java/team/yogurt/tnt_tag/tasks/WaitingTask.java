@@ -19,6 +19,9 @@ public class WaitingTask extends BukkitRunnable {
         int minPlayers = gameManager.getArenaManager().getMinPlayers();
         int players = gameManager.getPlayers().size();
         System.out.println("minPlayers=" + minPlayers + " players=" +players + " state=" + getGameManager().getGameState().toString());
+        if(gameManager.getGameState() != IGameState.WAITING){
+            this.cancel();
+        }
         if(players >= minPlayers){
             if(players > 5 && countdown > 204){
                 System.out.println(1);

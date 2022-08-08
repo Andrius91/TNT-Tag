@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.junit.Assert;
 import team.yogurt.common.enums.IGameState;
 import team.yogurt.common.interfaces.IArenaManager;
 import team.yogurt.common.interfaces.IGameManager;
@@ -102,7 +103,7 @@ public class GameManager implements IGameManager {
     @Override
     public void setGameState(IGameState state) {
         this.state = state;
-        switch (state){
+        switch (state) {
             case WAITING:
                 setRound(0);
                 WaitingTask waitingTask = new WaitingTask(this);
@@ -111,6 +112,7 @@ public class GameManager implements IGameManager {
             case STARTED:
                 System.out.println("Game started.");
                 getPlayers().forEach(x -> x.teleport(getArenaManager().getSpawn()));
+                giveRandomTnt();
                 StartTask startTask = new StartTask(this);
                 startTask.runTaskTimer(plugin, 0, 20);
                 break;
@@ -127,8 +129,6 @@ public class GameManager implements IGameManager {
     @Override
     public void start(){
         setGameState(IGameState.STARTED);
-        getPlayers().forEach(p -> p.teleport(getArenaManager().getSpawn())); //Envair jugadores al spawn
-        giveRandomTnt();
     }
 
     @Override

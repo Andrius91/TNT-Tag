@@ -6,6 +6,8 @@ import team.yogurt.common.interfaces.ICommand;
 import team.yogurt.common.interfaces.IGameManager;
 import team.yogurt.tnt_tag.Main;
 
+import java.util.Optional;
+
 public class SetSpawn implements ICommand {
     @Override
     public String getCommand() {
@@ -31,12 +33,12 @@ public class SetSpawn implements ICommand {
     public void perform(CommandSender sender, String[] args) {
         if(args.length == 3){
             String nombre = args[2];
-            IGameManager game = Main.getGames().stream()
+            Optional<IGameManager> game = Main.getGames().stream()
                     .filter(x -> x.getArenaManager().getNameArena().equalsIgnoreCase(nombre))
-                    .findFirst()
-                    .get();
-            if(game != null){
-                game.getArenaManager().setSpawn(((Player) sender ).getLocation());
+                    .findFirst();
+            if(game.isPresent()){
+                IGameManager gameManager = game.get();
+                gameManager.getArenaManager().setSpawn(((Player) sender ).getLocation());
                 sender.sendMessage("Has establecido el spawn para el mapa: " + nombre);
             }else{
                 sender.sendMessage("No se ha encontrado el mapa");

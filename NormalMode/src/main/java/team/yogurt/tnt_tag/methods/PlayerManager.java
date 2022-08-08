@@ -1,6 +1,5 @@
 package team.yogurt.tnt_tag.methods;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -8,6 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import team.yogurt.common.enums.IGameState;
 import team.yogurt.common.interfaces.IGameManager;
 import team.yogurt.common.interfaces.IPlayerManager;
+
+import java.util.Optional;
 
 import static team.yogurt.tnt_tag.Main.getGames;
 
@@ -31,36 +32,40 @@ public class PlayerManager implements IPlayerManager {
         World world = player.getWorld();
         world.createExplosion(player.getLocation().getX(), player.getLocation().getY()+1.2,
                 player.getLocation().getZ(), 1.5F, false, false);
-
+        getGame().getSpectators().add(player);
+        getGame().getPlayers().remove(player);
     }
 
     @Override
     public void sendToGame(String arenaName) {
-        for(IGameManager games : getGames()){
-            if(games.getArenaManager().getNameArena().equalsIgnoreCase(arenaName)){
-                if(games.getGameState() == IGameState.WAITING){
-                    games.getPlayers().add(player);
-                    player.teleport(games.getArenaManager().getSpawn());
-                }else{
-                    player.sendMessage("El juego ya ha iniciado");
-                }
-                break;
+
+        Optional<IGameManager> availableGame = getGames().stream()
+                .filter(x-> x.getArenaManager().getNameArena().equalsIgnoreCase(arenaName))
+                .findFirst();
+        if(availableGame.isPresent()){
+            IGameManager game = availableGame.get();
+            if(game.getGameState() == IGameState.WAITING){
+                game.getPlayers().add(player);
+                player.teleport(game.getArenaManager().getSpawn());
             }else{
-                player.sendMessage("Mapa no encontrado");
+                player.sendMessage("El mapa ya ha iniciado,");
             }
+
+        }else{
+            player.sendMessage("Mapa no encontrado.");
         }
+
     }
 
     @Override
     public void sendToRandomGame() {
-        IGameManager game = getGames().stream()
+        Optional<IGameManager> game = getGames().stream()
                 .filter(x -> x.getGameState() == IGameState.WAITING)
-                .findAny()
-                .get();
-
-        if(game != null){
-            game.getPlayers().add(player);
-            player.teleport(game.getArenaManager().getSpawn());
+                .findAny();
+        if(game.isPresent()){
+            IGameManager gameManager = game.get();
+            gameManager.getPlayers().add(player);
+            player.teleport(gameManager.getArenaManager().getSpawn());
         }else{
             player.sendMessage("No se ha encontrado un juego disponible");
         }
@@ -70,6 +75,9 @@ public class PlayerManager implements IPlayerManager {
     public IGameManager getGame() {
         for(IGameManager game : getGames()){
             if(game.getPlayers().contains(player)){
+                return game;
+            }
+            if(game.getSpectators().contains(player)){
                 return game;
             }
         }
